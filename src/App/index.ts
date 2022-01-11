@@ -1,9 +1,11 @@
 /**
- * Aqui é onde todo o bot é configurado e por fim inicializado, passando seu token e suas configurações iniciais
+ * Aqui é onde todo o bot é configurado e inicializado,
+ * passando seu token, módulos e suas configurações iniciais
  */
 
 import { Intents } from "discord.js";
-import BotInstance from "../Core/BotCore";
+import StartUp from "../Contexts/StartUp";
+import BotInstance from "../Core";
 
 const Ints = new Intents()
   .add("GUILD_MESSAGES")
@@ -11,8 +13,9 @@ const Ints = new Intents()
   .add("GUILD_MEMBERS")
   .add("GUILD_INTEGRATIONS");
 
-let HestiaBot = new BotInstance(Ints);
+const PotatoBot = new BotInstance(Ints);
 
-HestiaBot.Start(process.env.BOT_TOKEN);
+PotatoBot.AddModule(StartUp);
+PotatoBot.Start(process.env.BOT_TOKEN);
 
-export default HestiaBot;
+export default PotatoBot;
