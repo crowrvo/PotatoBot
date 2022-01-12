@@ -14,7 +14,7 @@
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["reflect-metadata"],
+    "types": ["reflect-metadata", "jest"],
     "paths": {
       "*": ["Types/*.d.ts"]
     }

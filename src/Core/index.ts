@@ -1,5 +1,11 @@
 import { Client, ClientEvents, HexColorString } from "discord.js";
+import { REST } from "@discordjs/rest";
+import {
+  RESTPostAPIApplicationCommandsJSONBody,
+  Routes,
+} from "discord-api-types/v9";
 import { EInstanceStatus } from "../Shared/Enums";
+import { SlashCommandBuilder } from "@discordjs/builders";
 import type { Intents } from "discord.js";
 
 /**
@@ -11,6 +17,10 @@ import type { Intents } from "discord.js";
 // Representa um item da lista de eventos do discord
 type EventPair = {
   [key in keyof ClientEvents]: Array<(...args: ClientEvents[key]) => void>;
+};
+
+type CommandPair = {
+  [key: string]: RESTPostAPIApplicationCommandsJSONBody;
 };
 
 // Principal estrutura do bot
@@ -27,6 +37,7 @@ export default class BotInstance {
   }
 
   private _EventsList: EventPair;
+  private _CommandsList: CommandPair;
   /**
    * @param intents - Pontos de acesso
    */
@@ -34,6 +45,7 @@ export default class BotInstance {
     this._Client = new Client({ intents });
     this._InstanceStatus = EInstanceStatus.Stopped;
     this._EventsList = {} as EventPair;
+    this._CommandsList = {} as CommandPair;
   }
 
   /**
@@ -47,7 +59,16 @@ export default class BotInstance {
       if (!this._EventsList[Event.Name]) this._EventsList[Event.Name] = [];
       this._EventsList[Event.Name].push(instance[Event.Method]);
     });
-
+    const Commands = Reflect.getMetadata("commands", module);
+    Commands.forEach(
+      (Command: { Builder: SlashCommandBuilder; Method: string }) => {
+        if (!this._EventsList["interactionCreate"])
+          this._EventsList["interactionCreate"] = [];
+        this._EventsList["interactionCreate"].push(instance[Command.Method]);
+        if (this._CommandsList[Command.Builder.name]) return;
+        this._CommandsList[Command.Builder.name] = Command.Builder.toJSON();
+      }
+    );
     return this;
   }
 
@@ -55,7 +76,8 @@ export default class BotInstance {
    * Comando que inicializa o Bot
    * @param token DISCORD TOKEN
    */
-  Start(token: string): void {
+  async Start(token: string) {
+    const rest = new REST({ version: "9" }).setToken(token);
     this._Client.login(token);
     this._InstanceStatus = EInstanceStatus.Running;
 
@@ -66,6 +88,24 @@ export default class BotInstance {
           func(this, ...args);
         });
       });
+    }
+
+    // Carrega os comandos do bot
+    const Commands = Object.values(this._CommandsList);
+    try {
+      console.log("Started refreshing application (/) commands.");
+      await rest.put(
+        Routes.applicationGuildCommands(
+          "930587431021973565",
+          "909235406837542952"
+        ),
+        {
+          body: Commands,
+        }
+      );
+      console.log("Successfully reloaded application (/) commands.");
+    } catch (error) {
+      console.error(error);
     }
   }
 }
