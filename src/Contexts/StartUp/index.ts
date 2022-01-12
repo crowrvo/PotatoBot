@@ -1,5 +1,5 @@
 import type BotInstance from "../../Core";
-import { ClientEvents, Interaction } from "discord.js";
+import type { ClientEvents } from "discord.js";
 import { Event } from "../../Core/Decorators/Event";
 import { Command } from "../../Core/Decorators/Command";
 import { ping } from "./Commands";
@@ -11,7 +11,7 @@ import { ping } from "./Commands";
  *
  *? Em caso de comando, construa todas as suas dependências antes de adiciona-lo.
  *? Você também pode importa-lo de fora
- *! Comandos sempre são do tipe interactionCreate
+ *! Comandos sempre são do tipo interactionCreate
  */
 
 export default class StartUp {

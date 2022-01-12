@@ -48,6 +48,13 @@ export default class BotInstance {
     this._CommandsList = {} as CommandPair;
   }
 
+  public get Events() {
+    return Object.keys(this._EventsList);
+  }
+
+  public get Commands() {
+    return Object.keys(this._CommandsList);
+  }
   /**
    * Comando que Adiciona um novo Módulo(contexto) na instancia do bot
    * @param token DISCORD TOKEN
@@ -55,20 +62,23 @@ export default class BotInstance {
   AddModule(module: new () => object): BotInstance {
     const instance = new module();
     const Events = Reflect.getMetadata("events", module);
-    Events.forEach((Event) => {
-      if (!this._EventsList[Event.Name]) this._EventsList[Event.Name] = [];
-      this._EventsList[Event.Name].push(instance[Event.Method]);
-    });
+
+    if (Events)
+      Events.forEach((Event) => {
+        if (!this._EventsList[Event.Name]) this._EventsList[Event.Name] = [];
+        this._EventsList[Event.Name].push(instance[Event.Method]);
+      });
     const Commands = Reflect.getMetadata("commands", module);
-    Commands.forEach(
-      (Command: { Builder: SlashCommandBuilder; Method: string }) => {
-        if (!this._EventsList["interactionCreate"])
-          this._EventsList["interactionCreate"] = [];
-        this._EventsList["interactionCreate"].push(instance[Command.Method]);
-        if (this._CommandsList[Command.Builder.name]) return;
-        this._CommandsList[Command.Builder.name] = Command.Builder.toJSON();
-      }
-    );
+    if (Commands)
+      Commands.forEach(
+        (Command: { Builder: SlashCommandBuilder; Method: string }) => {
+          if (!this._EventsList["interactionCreate"])
+            this._EventsList["interactionCreate"] = [];
+          this._EventsList["interactionCreate"].push(instance[Command.Method]);
+          if (this._CommandsList[Command.Builder.name]) return;
+          this._CommandsList[Command.Builder.name] = Command.Builder.toJSON();
+        }
+      );
     return this;
   }
 
