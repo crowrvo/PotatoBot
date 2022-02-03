@@ -1,3 +1,1 @@
-import ping from "./ping";
-
-export { ping };
+export { default as ping } from "./ping";

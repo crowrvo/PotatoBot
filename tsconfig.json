@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "./build",
-    "rootDir": "./src",
-    "baseUrl": "./src",
     "target": "ESNext",
     "module": "commonjs",
     "esModuleInterop": true,
@@ -16,7 +14,7 @@
     "experimentalDecorators": true,
     "types": ["reflect-metadata", "jest"],
     "paths": {
-      "*": ["Types/*.d.ts"]
+      "*": ["./src/Types/*.d.ts"]
     }
   },
   "include": ["src/**/*"],

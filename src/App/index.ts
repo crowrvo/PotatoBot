@@ -8,9 +8,8 @@ import "reflect-metadata";
 dotenv.config();
 
 import { Intents } from "discord.js";
-import StartUp from "../Contexts/StartUp";
 import BotInstance from "../Core";
-import Music from "../Contexts/Music";
+
 const Ints = new Intents()
   .add("GUILDS")
   .add("GUILD_MESSAGES")
@@ -19,10 +18,11 @@ const Ints = new Intents()
 
 const PotatoBot = new BotInstance(Ints);
 
-PotatoBot.AddModule(Music);
-PotatoBot.Start(process.env.BOT_TOKEN);
+(async () => {
+  await PotatoBot.Start(process.env.BOT_TOKEN);
 
-console.log(PotatoBot.Events);
-console.log(PotatoBot.Commands);
+  console.log(PotatoBot.Events);
+  console.log(PotatoBot.Commands);
+})();
 
 export default PotatoBot;

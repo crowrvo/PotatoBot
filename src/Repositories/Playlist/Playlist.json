@@ -1,0 +1,12 @@
+{
+    "playlist": [
+        {
+            "_id": "isaudusaif",
+            "_title": "um titulo qualquer",
+            "_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "_thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+            "_duration": 60,
+            "_requester": "544564564811704784"
+        }
+    ]
+}

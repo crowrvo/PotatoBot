@@ -1,3 +1,1 @@
-import { EInstanceStatus } from "./EInstanceStatus";
-
-export { EInstanceStatus };
+export { EInstanceStatus } from "./EInstanceStatus";

@@ -1,8 +1,8 @@
-import type BotInstance from "../../Core";
+import type BotInstance from "../Core";
 import type { ClientEvents } from "discord.js";
-import { Event } from "../../Core/Decorators/Event";
-import { Command } from "../../Core/Decorators/Command";
-import { ping } from "./Commands";
+import { Event } from "../Core/Decorators/Event";
+import { Command } from "../Core/Decorators/Command";
+import { ping } from "../Contexts/StartUp/Commands";
 
 /**
  *? Essa classe StartUp serve como exemplo de como construir novos módulos para o bot
@@ -14,7 +14,7 @@ import { ping } from "./Commands";
  *! Comandos sempre são do tipo interactionCreate
  */
 
-export default class StartUp {
+export default class StartUpController {
   @Event("ready")
   start(Bot: BotInstance, ...[e]: ClientEvents["ready"]) {
     console.log("Bot Iniciado");
@@ -24,6 +24,7 @@ export default class StartUp {
   async ping(Bot: BotInstance, ...[e]: ClientEvents["interactionCreate"]) {
     if (!e.isCommand()) return;
     if (e.commandName !== "ping") return;
+
     await e.reply("Pong!");
   }
 }

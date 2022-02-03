@@ -1,3 +1,4 @@
+import type { Intents } from "discord.js";
 import { Client, ClientEvents, HexColorString } from "discord.js";
 import { REST } from "@discordjs/rest";
 import {
@@ -6,7 +7,7 @@ import {
 } from "discord-api-types/v9";
 import { EInstanceStatus } from "../Shared/Enums";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { Intents } from "discord.js";
+import glob from "glob";
 
 /**
  * Essa é uma parte complicada e delicada do código.
@@ -46,6 +47,16 @@ export default class BotInstance {
     this._InstanceStatus = EInstanceStatus.Stopped;
     this._EventsList = {} as EventPair;
     this._CommandsList = {} as CommandPair;
+
+    // Load Controllers
+    glob(`${__dirname}/../Controllers/*`, (er, files) => {
+      files.forEach(async (file, i) => {
+        console.info(`Registrando controller ${i + 1} de ${files.length}`);
+        let Controller = await require(file).default;
+        this.AddController(Controller);
+      });
+      console.info(`Controllers registrados com sucesso!`);
+    });
   }
 
   public get Events() {
@@ -57,9 +68,8 @@ export default class BotInstance {
   }
   /**
    * Comando que Adiciona um novo Módulo(contexto) na instancia do bot
-   * @param token DISCORD TOKEN
    */
-  AddModule(module: new () => object): BotInstance {
+  AddController(module: new () => object): BotInstance {
     const instance = new module();
     const Events = Reflect.getMetadata("events", module);
 

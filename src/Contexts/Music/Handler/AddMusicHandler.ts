@@ -22,7 +22,7 @@ export default class AddMusicHandler implements IHandler {
         "Comando inválido",
         command.GetNotifications
       );
-      
+
     const serv = this._playListService.Search(command.busca);
 
 
